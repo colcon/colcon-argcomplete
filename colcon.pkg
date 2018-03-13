@@ -1,0 +1,5 @@
+{
+    "hooks": [
+        "share/colcon-argcomplete/hook/colcon-argcomplete.bash"
+    ]
+}
