@@ -1,5 +1,6 @@
 {
     "hooks": [
-        "share/colcon-argcomplete/hook/colcon-argcomplete.bash"
+        "share/colcon-argcomplete/hook/colcon-argcomplete.bash",
+        "share/colcon-argcomplete/hook/colcon-argcomplete.zsh"
     ]
 }
