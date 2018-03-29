@@ -19,8 +19,9 @@ if sys.platform == 'win32':
     sys.exit(1)
 
 data_files = (
-    ('share/colcon-argcomplete/hook',
-        ('completion/colcon-argcomplete.bash', )),
+    ('share/colcon-argcomplete/hook', (
+        'completion/colcon-argcomplete.bash',
+        'completion/colcon-argcomplete.zsh')),
 )
 
 
