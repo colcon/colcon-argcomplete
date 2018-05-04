@@ -57,5 +57,5 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
     def parse_args(self, *args, **kwargs):
         """Register argcomplete hook."""
         from argcomplete import autocomplete
-        autocomplete(self._parser)
+        autocomplete(self._parser, exclude=['-h', '--help'])
         return self._parser.parse_args(*args, **kwargs)
