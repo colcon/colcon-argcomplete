@@ -18,11 +18,25 @@ if sys.platform == 'win32':
         file=sys.stderr)
     sys.exit(1)
 
+src_base = 'completion'
 data_files = (
-    ('share/colcon-argcomplete/hook', (
+    ('share/colcon-argcomplete/hook', [
         'completion/colcon-argcomplete.bash',
-        'completion/colcon-argcomplete.zsh')),
+        'completion/colcon-argcomplete.zsh']),
 )
+
+src_base_offset = None
+dst_prefix = None
+if not os.path.exists(src_base):
+    # assuming this is a deb_dist build
+    if os.path.exists(os.path.join('..', '..', src_base)):
+        # use source base offset for data files
+        for _, srcs in data_files:
+            for i, src in enumerate(srcs):
+                srcs[i] = os.path.join('..', '..', src)
+        # use dst prefix for data files
+        dst_prefix = os.path.join(
+            os.getcwd(), 'debian/python3-colcon-argcomplete')
 
 
 # in order to be referenced from the colcon.pkg file
@@ -60,8 +74,11 @@ class CustomInstallCommand(install):
 
     def run(self):
         global data_files
-        # https://github.com/pypa/setuptools/blob/f7ac232981d3d01e3c76890ae28da75859790dbe/setuptools/command/install.py#L63-L67
-        if not self._called_from_setup(inspect.currentframe()):
+        # https://github.com/pypa/setuptools/blob/52aacd5b276fedd6849c3a648a0014f5da563e93/setuptools/command/install.py#L59-L67
+        # Explicit request for old-style install?  Just do it
+        if self.old_and_unmanageable or self.single_version_externally_managed:
+            distutils_install.install.run(self)
+        elif not self._called_from_setup(inspect.currentframe()):
             # Run in backward-compatibility mode to support bdist_* commands.
             distutils_install.install.run(self)
         else:
@@ -74,10 +91,13 @@ class CustomInstallCommand(install):
 
 
 def _foreach_data_file(command, data_files, msg, callback):
+    global dst_prefix
     for dst_dir, srcs in data_files:
+        if command.prefix is not None:
+            dst_dir = os.path.join(command.prefix, dst_dir)
+        if dst_prefix:
+            dst_dir = os.path.join(dst_prefix) + dst_dir
         for src in srcs:
-            if command.prefix is not None:
-                dst_dir = os.path.join(command.prefix, dst_dir)
             dst = os.path.join(dst_dir, os.path.basename(src))
             try:
                 src = os.path.join(
