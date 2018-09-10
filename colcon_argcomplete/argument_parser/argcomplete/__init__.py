@@ -65,6 +65,12 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
 
         return argument
 
+    def parse_known_args(self, *args, **kwargs):
+        """Override the args in completion mode."""
+        if os.environ.get('_ARGCOMPLETE') == '1':
+            kwargs['args'] = os.environ['COMP_LINE'].split(' ')[1:]
+        return self._parser.parse_known_args(*args, **kwargs)
+
     def parse_args(self, *args, **kwargs):
         """Register argcomplete hook."""
         global _start_time
