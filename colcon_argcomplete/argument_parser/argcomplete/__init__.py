@@ -1,12 +1,23 @@
 # Copyright 2016-2018 Dirk Thomas
 # Licensed under the Apache License, Version 2.0
 
+import os
+import time
+
 from colcon_argcomplete.argcomplete_completer import get_argcomplete_completer
 from colcon_argcomplete.argument_parser.argcomplete.completer.package_name \
     import package_name_completer
 from colcon_core.argument_parser import ArgumentParserDecorator
 from colcon_core.argument_parser import ArgumentParserDecoratorExtensionPoint
+from colcon_core.environment_variable import EnvironmentVariable
 from colcon_core.plugin_system import satisfies_version
+
+"""Environment variable to log the completion time"""
+COMPLETION_LOGFILE_ENVIRONMENT_VARIABLE = EnvironmentVariable(
+    'COLCON_COMPLETION_LOGFILE',
+    'Set the logfile for completion time')
+
+_start_time = time.time()
 
 
 class ArgcompleteArgumentParserDecorator(
@@ -56,6 +67,15 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
 
     def parse_args(self, *args, **kwargs):
         """Register argcomplete hook."""
+        global _start_time
         from argcomplete import autocomplete
+
+        # if requested log the duration the completion took into a file
+        logfile = os.environ.get(COMPLETION_LOGFILE_ENVIRONMENT_VARIABLE.name)
+        if logfile is not None:
+            duration = time.time() - _start_time
+            with open(logfile, 'a') as h:
+                h.write('{duration}s\n'.format_map(locals()))
+
         autocomplete(self._parser, exclude=['-h', '--help'])
         return self._parser.parse_args(*args, **kwargs)
