@@ -69,7 +69,7 @@ def get_argcomplete_completer(parser, *args, **kwargs):
             completer = extension.get_completer(parser, *args, **kwargs)
             assert callable(completer) or completer is None, \
                 'get_completer() should return a callable or None'
-        except Exception as e:
+        except Exception as e:  # noqa: F841
             # catch exceptions raised in completer extension
             exc = traceback.format_exc()
             logger.error(
