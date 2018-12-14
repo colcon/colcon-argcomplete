@@ -67,7 +67,7 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
 
     def parse_known_args(self, *args, **kwargs):
         """Override the args in completion mode."""
-        if os.environ.get('_ARGCOMPLETE') == '1':
+        if _is_completion_requested():
             kwargs['args'] = os.environ['COMP_LINE'].split(' ')[1:]
         return self._parser.parse_known_args(*args, **kwargs)
 
@@ -78,10 +78,15 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
 
         # if requested log the duration the completion took into a file
         logfile = os.environ.get(COMPLETION_LOGFILE_ENVIRONMENT_VARIABLE.name)
-        if logfile is not None:
+        if _is_completion_requested() and logfile is not None:
             duration = time.time() - _start_time
+            comp_line = os.environ['COMP_LINE']
             with open(logfile, 'a') as h:
-                h.write('{duration}s\n'.format_map(locals()))
+                h.write('{duration}s - {comp_line}\n'.format_map(locals()))
 
         autocomplete(self._parser, exclude=['-h', '--help'])
         return self._parser.parse_args(*args, **kwargs)
+
+
+def _is_completion_requested():
+    return os.environ.get('_ARGCOMPLETE') == '1'
