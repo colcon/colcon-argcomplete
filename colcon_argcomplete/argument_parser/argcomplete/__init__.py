@@ -1,7 +1,9 @@
 # Copyright 2016-2018 Dirk Thomas
 # Licensed under the Apache License, Version 2.0
 
+import argparse
 import os
+import shlex
 import time
 
 from colcon_argcomplete.argcomplete_completer import get_argcomplete_completer
@@ -68,8 +70,12 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
     def parse_known_args(self, *args, **kwargs):
         """Override the args in completion mode."""
         if _is_completion_requested():
-            kwargs['args'] = os.environ['COMP_LINE'].split(' ')[1:]
-        return self._parser.parse_known_args(*args, **kwargs)
+            kwargs['args'] = shlex.split(os.environ['COMP_LINE'])[1:]
+        try:
+            return self._parser.parse_known_args(*args, **kwargs)
+        except SystemExit:
+            # if the partial arguments can't be parsed return no known args
+            return argparse.Namespace(verb_name=None), []
 
     def parse_args(self, *args, **kwargs):
         """Register argcomplete hook."""
