@@ -151,6 +151,6 @@ if 'BUILD_DEBIAN_PACKAGE' in os.environ:
         except FileNotFoundError:
             pass
 
-        cmdclass['install'] = CustomInstallCommand
+    cmdclass['install'] = CustomInstallCommand
 
 setup(cmdclass=cmdclass)
