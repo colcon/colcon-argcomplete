@@ -81,18 +81,12 @@ if 'BUILD_DEBIAN_PACKAGE' in os.environ:
             'completion/colcon-argcomplete.zsh']),
     )
 
-    src_base_offset = None
     dst_prefix = None
-    if not os.path.exists(src_base):
+    if os.path.exists('.pc/applied-patches'):
         # assuming this is a deb_dist build
-        if os.path.exists(os.path.join('..', '..', src_base)):
-            # use source base offset for data files
-            for _, srcs in data_files:
-                for i, src in enumerate(srcs):
-                    srcs[i] = os.path.join('..', '..', src)
-            # use dst prefix for data files
-            dst_prefix = os.path.join(
-                os.getcwd(), 'debian/python3-colcon-argcomplete')
+        # use dst prefix for data files
+        dst_prefix = os.path.join(
+            os.getcwd(), 'debian/python3-colcon-argcomplete')
 
     class CustomInstallCommand(install):
 
