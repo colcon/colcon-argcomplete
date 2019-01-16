@@ -74,8 +74,10 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
         try:
             return self._parser.parse_known_args(*args, **kwargs)
         except SystemExit:
-            # if the partial arguments can't be parsed return no known args
-            return argparse.Namespace(verb_name=None), []
+            if _is_completion_requested():
+                # if the partial arguments can't be parsed return no known args
+                return argparse.Namespace(verb_name=None), []
+            raise
 
     def parse_args(self, *args, **kwargs):
         """Register argcomplete hook."""
