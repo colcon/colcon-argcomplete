@@ -1,7 +1,7 @@
 Description: Remove the data_files from the setup.cfg file since the
  Debian package can't rely on setuptools 40.5.0 or higher.
  Instead the custom logic in setup.py will handle these file for the
- Debianpackage.
+ Debian package.
  The custom logic doesn't work for a wheel though and therefore can't be
  used generically.
 Author: Dirk Thomas <web@dirk-thomas.net>
@@ -9,7 +9,7 @@ Author: Dirk Thomas <web@dirk-thomas.net>
 --- setup.cfg	2019-01-04 11:11:11.000000000 -0800
 +++ setup.cfg.patched	2019-01-04 11:11:11.000000000 -0800
 @@ -45,10 +45,12 @@
- 	pytest-cov
+ 	scspell3k>=2.2
  zip_safe = false
  
 -[options.data_files]
