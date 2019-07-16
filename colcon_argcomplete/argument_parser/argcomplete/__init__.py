@@ -19,7 +19,7 @@ COMPLETION_LOGFILE_ENVIRONMENT_VARIABLE = EnvironmentVariable(
     'COLCON_COMPLETION_LOGFILE',
     'Set the logfile for completion time')
 
-_start_time = time.time()
+_start_time = time.monotonic()
 
 
 class ArgcompleteArgumentParserDecorator(
@@ -87,7 +87,7 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
         # if requested log the duration the completion took into a file
         logfile = os.environ.get(COMPLETION_LOGFILE_ENVIRONMENT_VARIABLE.name)
         if _is_completion_requested() and logfile is not None:
-            duration = time.time() - _start_time
+            duration = time.monotonic() - _start_time
             comp_line = os.environ['COMP_LINE']
             with open(logfile, 'a') as h:
                 h.write('{duration}s - {comp_line}\n'.format_map(locals()))
