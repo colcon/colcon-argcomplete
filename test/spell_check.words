@@ -5,6 +5,7 @@ argparse
 autocomplete
 colcon
 completers
+contextlib
 currentframe
 debian
 debinfo
