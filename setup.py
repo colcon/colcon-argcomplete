@@ -1,6 +1,7 @@
 # Copyright 2016-2018 Dirk Thomas
 # Licensed under the Apache License, Version 2.0
 
+from contextlib import suppress
 import os
 import sys
 
@@ -116,12 +117,10 @@ if 'BUILD_DEBIAN_PACKAGE' in os.environ:
                 dst_dir = os.path.join(dst_prefix) + dst_dir
             for src in srcs:
                 dst = os.path.join(dst_dir, os.path.basename(src))
-                try:
+                with suppress(OSError):
                     src = os.path.join(
                         os.path.dirname(os.path.realpath('setup.py')),
                         src)
-                except OSError:
-                    pass
                 print(msg.format_map(locals()))
                 if not command.dry_run:
                     callback(src, dst_dir, dst)
@@ -140,10 +139,8 @@ if 'BUILD_DEBIAN_PACKAGE' in os.environ:
             'data file destination directory must not be a file'
         if not os.path.isdir(dst_dir):
             os.makedirs(dst_dir, exist_ok=True)
-        try:
+        with suppress(FileNotFoundError):
             os.remove(dst)
-        except FileNotFoundError:
-            pass
 
     cmdclass['install'] = CustomInstallCommand
 
