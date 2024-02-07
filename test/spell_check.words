@@ -14,11 +14,13 @@ foreach
 github
 https
 iterdir
+linter
 logfile
 noqa
 pathlib
 pkgs
 plugin
+pydocstyle
 pypa
 pytest
 scspell
