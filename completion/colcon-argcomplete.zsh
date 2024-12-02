@@ -1,4 +1,6 @@
-autoload -U +X compinit && compinit
+if (( ! ${+_comps} )); then
+  autoload -U +X compinit && compinit
+fi
 autoload -U +X bashcompinit && bashcompinit
 if type register-python-argcomplete3 > /dev/null 2>&1; then
   eval "$(register-python-argcomplete3 colcon)"
