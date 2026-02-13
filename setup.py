@@ -14,13 +14,19 @@ if sys.platform == 'win32':
     sys.exit(1)
 
 if 'BUILD_DEBIAN_PACKAGE' not in os.environ:
-    from pkg_resources import parse_version
+    def _try_parse(raw):
+        raw = next(iter((raw or '').split('-', 1)))
+        for part in raw.split('.'):
+            try:
+                yield int(part)
+            except ValueError:
+                break
+
     from setuptools import __version__ as setuptools_version
-    minimum_version = '40.5.0'
-    if parse_version(setuptools_version) < parse_version(minimum_version):
+    if tuple(_try_parse(setuptools_version)) < (40, 5):
         print(
             "The Python package 'colcon-argcomplete' requires at least "
-            'setuptools version {minimum_version}'.format_map(locals()),
+            'setuptools version 40.5',
             file=sys.stderr)
         sys.exit(1)
 
