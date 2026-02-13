@@ -81,7 +81,6 @@ class ArgcompleteDecorator(ArgumentParserDecorator):
 
     def parse_args(self, *args, **kwargs):
         """Register argcomplete hook."""
-        global _start_time
         from argcomplete import autocomplete
 
         # if requested log the duration the completion took into a file
